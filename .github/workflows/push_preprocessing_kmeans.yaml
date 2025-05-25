@@ -1,4 +1,4 @@
-name: Upload Preprocessing Script to S3
+name: Upload Preprocessing Script to S3 and Trigger Pipeline
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py'
 
 jobs:
-  upload-script:
+  upload-and-trigger:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,14 @@ jobs:
       run: |
         aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
           s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
+
+    - name: Trigger Lambda via API Gateway
+      run: |
+        curl -X POST https://rpyve3xy3e.execute-api.us-east-1.amazonaws.com/Prod/trigger \
+          -H "Content-Type: application/json" \
+          -d '{
+                "pipeline": "preprocessing_kmeans",
+                "params": {
+                  "input_files": ["input_test1.csv", "input_test2.csv"]
+                }
+              }'
