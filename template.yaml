@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MLOps - Trigger SageMaker Pipeline via Lambda
+
+Resources:
+  TriggerPipelineFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trigger-pipeline-fn
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      CodeUri: lambda/trigger_pipeline/
+      Timeout: 120
+      MemorySize: 512
+      Role: arn:aws:iam::975049948583:role/LambdaSageMakerInferencePolicy
+      Events:
+        ApiTrigger:
+          Type: Api
+          Properties:
+            Path: /trigger
+            Method: post
+
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - sagemaker:CreateProcessingJob
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: arn:aws:s3:::swo-ngoctran-public/*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: arn:aws:s3:::swo-ngoctran-public/*

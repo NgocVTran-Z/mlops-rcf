@@ -1,0 +1,5 @@
+.aws-sam/
+.ipynb_checkpoints/
+*.log
+*.csv
+__pycache__/

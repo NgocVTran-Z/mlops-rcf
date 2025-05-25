@@ -1,0 +1,22 @@
+sam build
+sam deploy --guided
+
+stack name: mlops-trigger-stack
+region: us-east-1
+
+# delete old stack
+aws cloudformation delete-stack --stack-name mlops-trigger-stack
+
+# check sagemaker role
+aws sts get-caller-identity
+
+{
+    "UserId": "AROA6GBMBPWTWKY2OCT6P:SageMaker",
+    "Account": "975049948583",
+    "Arn": "arn:aws:sts::975049948583:assumed-role/AmazonSageMaker-ExecutionRole-20250518T181754/SageMaker"
+}
+
+
+
+
+touch .gitignore
