@@ -27,7 +27,7 @@ jobs:
 
     - name: Trigger Lambda via API Gateway
       run: |
-        curl -X POST https://rpyve3xy3e.execute-api.us-east-1.amazonaws.com/Prod/trigger \
+        curl -X POST https://bm9tnja9nj.execute-api.us-east-1.amazonaws.com/Prod/trigger \
           -H "Content-Type: application/json" \
           -d '{
                 "pipeline": "preprocessing_kmeans",
