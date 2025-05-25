@@ -19,7 +19,6 @@ Resources:
           Properties:
             Path: /trigger
             Method: post
-
       Policies:
         - Statement:
             - Effect: Allow
@@ -34,3 +33,9 @@ Resources:
               Action:
                 - s3:PutObject
               Resource: arn:aws:s3:::swo-ngoctran-public/*
+
+Outputs:
+  ApiTriggerEndpoint:
+    Description: "API Gateway endpoint for triggering preprocessing pipeline"
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/trigger
