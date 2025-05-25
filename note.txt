@@ -19,4 +19,17 @@ aws sts get-caller-identity
 
 
 
-touch .gitignore
+touch .gitignore 
+
+aws cloudformation describe-stacks \
+  --stack-name mlops-trigger-stack \
+  --query "Stacks[0].Outputs"
+
+[
+    {
+        "OutputKey": "ApiTriggerEndpoint",
+        "OutputValue": "https://rpyve3xy3e.execute-api.us-east-1.amazonaws.com/Prod/trigger",
+        "Description": "API Gateway endpoint for triggering preprocessing pipeline"
+    }
+]
+
