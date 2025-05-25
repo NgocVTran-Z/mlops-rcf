@@ -1,23 +1,20 @@
+import os
+import json
 import pandas as pd
 import boto3
-import argparse
-import os
 from io import BytesIO
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--input_files', nargs='+', required=True)
-    return parser.parse_args()
-
 def main():
-    args = parse_args()
     s3 = boto3.client("s3")
 
     input_bucket = "swo-ngoctran-public"
     input_prefix = "incoming_data/"
     output_prefix = "/opt/ml/processing/output/"
 
-    for file in args.input_files:
+    # ✅ Lấy danh sách file từ biến môi trường
+    input_files = json.loads(os.environ.get("INPUT_FILES", "[]"))
+
+    for file in input_files:
         input_key = input_prefix + file
         print(f"📥 Processing {input_key}")
 

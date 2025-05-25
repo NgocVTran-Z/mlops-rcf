@@ -33,3 +33,8 @@ aws cloudformation describe-stacks \
     }
 ]
 
+
+
+# upload manually
+aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
+  s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
