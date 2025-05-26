@@ -1,37 +1,25 @@
-name: Upload Preprocessing Script to S3 and Trigger Pipeline
+name: Trigger Preprocessing KMeans
 
 on:
   push:
     paths:
-      - 'pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py'
+      - 'pipelines/01_preprocessing_kmeans/input_files.json'
 
 jobs:
-  upload-and-trigger:
+  call-api:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Read input file list
+        id: load_input
+        run: |
+          FILE_LIST=$(jq -c '.input_files' pipelines/01_preprocessing_kmeans/input_files.json)
+          echo "file_list=$FILE_LIST" >> $GITHUB_OUTPUT
 
-    - name: Upload preprocessing script to S3
-      run: |
-        aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
-          s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
-
-    - name: Trigger Lambda via API Gateway
-      run: |
-        curl -X POST https://bm9tnja9nj.execute-api.us-east-1.amazonaws.com/Prod/trigger \
-          -H "Content-Type: application/json" \
-          -d '{
-                "pipeline": "preprocessing_kmeans",
-                "params": {
-                  "input_files": ["input_test1.csv", "input_test2.csv"]
-                }
-              }'
+      - name: Trigger API Gateway
+        run: |
+          curl -X POST "${{ secrets.TRIGGER_API_ENDPOINT }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"pipeline\":\"preprocessing_kmeans\",\"params\":{\"input_files\":${{ steps.load_input.outputs.file_list }}}}"

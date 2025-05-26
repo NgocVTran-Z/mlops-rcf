@@ -23,7 +23,7 @@ def main():
         df = pd.read_csv(BytesIO(obj['Body'].read()), header=None)
 
         # Transform
-        df[0] *= 100
+        df[0] *= 111
 
         # Save to local output
         local_output_path = os.path.join(output_prefix, file)

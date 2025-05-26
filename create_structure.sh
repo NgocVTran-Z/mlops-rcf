@@ -24,3 +24,8 @@ touch .github/workflows/push_preprocessing_kmeans.yaml
 
 
 touch pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py
+touch pipelines/01_preprocessing_kmeans/input_files.json
+
+
+
+
