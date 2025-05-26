@@ -23,7 +23,7 @@ def main():
         df = pd.read_csv(BytesIO(obj['Body'].read()), header=None)
 
         # Transform
-        df[0] *= 5
+        df[0] *= 6
 
         # Save to local output
         local_output_path = os.path.join(output_prefix, file)
