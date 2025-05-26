@@ -19,6 +19,12 @@ Resources:
           Properties:
             Path: /trigger
             Method: post
+      Environment:
+        Variables:
+          SAGEMAKER_ROLE_ARN: arn:aws:iam::975049948583:role/LambdaSageMakerInferencePolicy
+          PROCESSING_IMAGE_URI: 683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3
+          SCRIPT_S3_URI: s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
+          OUTPUT_S3_PATH: s3://swo-ngoctran-public/inference_result/
       Policies:
         - Statement:
             - Effect: Allow

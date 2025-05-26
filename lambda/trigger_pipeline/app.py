@@ -1,17 +1,14 @@
 import json
 import boto3
 import uuid
+import os
 
 sagemaker = boto3.client("sagemaker")
 
 def lambda_handler(event, context):
-    sts = boto3.client("sts")
-    identity = sts.get_caller_identity()
-    print("🟢 Lambda is running as:", identity["Arn"])
-
-    
     try:
-        print("Received event:", json.dumps(event))
+        print("🟢 Lambda is running.")
+        print("📨 Event received:", event)
 
         body = json.loads(event['body'])
         pipeline = body.get("pipeline")
@@ -24,22 +21,43 @@ def lambda_handler(event, context):
             }
 
         job_name = f"preprocess-kmeans-{uuid.uuid4().hex[:8]}"
+        input_files = params.get("input_files", [])
+
+        # Read environment variables
+        role_arn = os.environ["SAGEMAKER_ROLE_ARN"]
+        image_uri = os.environ["PROCESSING_IMAGE_URI"]
+        script_s3 = os.environ["SCRIPT_S3_URI"]
+        output_s3 = os.environ["OUTPUT_S3_PATH"]
+
+        print("📦 Job Name:", job_name)
+        print("📁 Input files:", input_files)
+        print("📜 Script S3:", script_s3)
+        print("📤 Output S3:", output_s3)
 
         sagemaker.create_processing_job(
             ProcessingJobName=job_name,
-            # RoleArn="arn:aws:iam::975049948583:role/AmazonSageMaker-ExecutionRole-20250518T181754",
-            RoleArn = "arn:aws:iam::975049948583:role/LambdaSageMakerInferencePolicy",
-
+            RoleArn=role_arn,
             AppSpecification={
-                "ImageUri": "683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3"
+                "ImageUri": image_uri,
+                "ContainerEntrypoint": ["python3", "/opt/ml/processing/code/preprocessing_kmeans.py"]
             },
-            ProcessingInputs=[],
+            ProcessingInputs=[
+                {
+                    "InputName": "code",
+                    "S3Input": {
+                        "S3Uri": script_s3,
+                        "LocalPath": "/opt/ml/processing/code",
+                        "S3DataType": "S3Prefix",
+                        "S3InputMode": "File"
+                    }
+                }
+            ],
             ProcessingOutputConfig={
                 "Outputs": [
                     {
                         "OutputName": "output",
                         "S3Output": {
-                            "S3Uri": "s3://swo-ngoctran-public/inference_result/",
+                            "S3Uri": output_s3,
                             "LocalPath": "/opt/ml/processing/output",
                             "S3UploadMode": "EndOfJob"
                         }
@@ -57,7 +75,7 @@ def lambda_handler(event, context):
                 "MaxRuntimeInSeconds": 3600
             },
             Environment={
-                "INPUT_FILES": json.dumps(params.get("input_files", []))
+                "INPUT_FILES": json.dumps(input_files)
             }
         )
 

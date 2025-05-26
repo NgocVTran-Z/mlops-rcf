@@ -1,6 +1,8 @@
 sam build
 sam deploy --guided
 
+sam build && sam deploy
+
 stack name: mlops-trigger-stack
 region: us-east-1
 
