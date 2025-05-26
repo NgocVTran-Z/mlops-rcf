@@ -45,3 +45,6 @@ git add .
 git commit -m "change x5 to x6"
 git push origin main
 
+git token (30 days)
+NgocVTran-Z
+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
