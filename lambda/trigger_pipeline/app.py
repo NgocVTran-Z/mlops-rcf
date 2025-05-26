@@ -5,8 +5,10 @@ import uuid
 sagemaker = boto3.client("sagemaker")
 
 def lambda_handler(event, context):
+    sts = boto3.client("sts")
     identity = sts.get_caller_identity()
-    print("Lambda is running as:", identity["Arn"])
+    print("🟢 Lambda is running as:", identity["Arn"])
+
     
     try:
         print("Received event:", json.dumps(event))
@@ -25,7 +27,9 @@ def lambda_handler(event, context):
 
         sagemaker.create_processing_job(
             ProcessingJobName=job_name,
-            RoleArn="arn:aws:iam::975049948583:role/AmazonSageMaker-ExecutionRole-20250518T181754",
+            # RoleArn="arn:aws:iam::975049948583:role/AmazonSageMaker-ExecutionRole-20250518T181754",
+            RoleArn = "arn:aws:iam::975049948583:role/LambdaSageMakerInferencePolicy",
+
             AppSpecification={
                 "ImageUri": "683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3"
             },
