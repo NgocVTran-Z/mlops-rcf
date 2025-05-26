@@ -5,6 +5,9 @@ import uuid
 sagemaker = boto3.client("sagemaker")
 
 def lambda_handler(event, context):
+    identity = sts.get_caller_identity()
+    print("Lambda is running as:", identity["Arn"])
+    
     try:
         print("Received event:", json.dumps(event))
 

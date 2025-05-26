@@ -42,5 +42,6 @@ aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
 
 # push code
 git add .
-git commit -m ""
+git commit -m "change x5 to x6"
+git push origin main
 
