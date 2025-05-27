@@ -1,0 +1,3 @@
+{
+    "s3_script_path": "s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py"
+}

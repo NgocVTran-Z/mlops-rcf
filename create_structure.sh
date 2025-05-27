@@ -20,11 +20,18 @@ touch template.yaml
 touch samconfig.toml
 touch lambda/trigger_pipeline/app.py
 touch lambda/trigger_pipeline/requirements.txt
-touch .github/workflows/push_preprocessing_kmeans.yaml
-
 
 touch pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py
 touch pipelines/01_preprocessing_kmeans/input_files.json
+touch pipelines/01_preprocessing_kmeans/config.json
+
+touch config/global_config.json
+
+touch .github/workflows/upload_preprocessing_kmeans.yaml
+touch .github/workflows/push_preprocessing_kmeans.yaml
+
+
+
 
 
 

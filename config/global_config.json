@@ -1,0 +1,6 @@
+{
+  "bucket_name": "swo-ngoctran-public",
+  "incoming_prefix": "incoming_data/",
+  "output_prefix": "inference_result/",
+  "processing_image": "683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3"
+}
