@@ -37,7 +37,7 @@ jobs:
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
         with:
-          version: latest
+          use-installer: false  # ✅ đã bỏ dòng version
 
       - name: SAM Build
         run: sam build
