@@ -41,6 +41,20 @@ aws cloudformation describe-stacks \
 aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
   s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
 
+# upload .json
+aws s3 cp config/global_config.json \
+  s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/config/global_config.json
+
+aws s3 cp pipelines/01_preprocessing_kmeans/config.json \
+  s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/pipelines/01_preprocessing_kmeans/config.json
+
+# upload .py
+aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
+  s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/preprocessing_kmeans.py
+
+
+
+
 
 # push code
 git add .

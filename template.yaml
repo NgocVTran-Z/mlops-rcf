@@ -2,6 +2,17 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: MLOps - Trigger SageMaker Pipeline via Lambda
 
+Parameters:
+  ProcessingImageUri:
+    Type: String
+    Default: 683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3
+  ScriptS3Uri:
+    Type: String
+    Default: s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/preprocessing_kmeans.py
+  OutputS3Path:
+    Type: String
+    Default: s3://swo-ngoctran-public/inference_result/
+
 Resources:
   TriggerPipelineFunction:
     Type: AWS::Serverless::Function
@@ -22,9 +33,9 @@ Resources:
       Environment:
         Variables:
           SAGEMAKER_ROLE_ARN: arn:aws:iam::975049948583:role/LambdaSageMakerInferencePolicy
-          PROCESSING_IMAGE_URI: 683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:0.23-1-cpu-py3
-          SCRIPT_S3_URI: s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
-          OUTPUT_S3_PATH: s3://swo-ngoctran-public/inference_result/
+          PROCESSING_IMAGE_URI: !Ref ProcessingImageUri
+          SCRIPT_S3_URI: !Ref ScriptS3Uri
+          OUTPUT_S3_PATH: !Ref OutputS3Path
       Policies:
         - Statement:
             - Effect: Allow
@@ -34,12 +45,9 @@ Resources:
             - Effect: Allow
               Action:
                 - s3:GetObject
-              Resource: arn:aws:s3:::swo-ngoctran-public/*
-            - Effect: Allow
-              Action:
                 - s3:PutObject
-              Resource: arn:aws:s3:::swo-ngoctran-public/*
-
+                - s3:ListBucket
+              Resource: arn:aws:s3:::swo-ngoctran-public*
 Outputs:
   ApiTriggerEndpoint:
     Description: "API Gateway endpoint for triggering preprocessing pipeline"

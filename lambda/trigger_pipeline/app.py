@@ -34,6 +34,9 @@ def lambda_handler(event, context):
         print("📜 Script S3:", script_s3)
         print("📤 Output S3:", output_s3)
 
+        # Extract script folder path from full S3 URI
+        script_s3_folder = script_s3.rsplit("/", 1)[0] + "/"
+
         sagemaker.create_processing_job(
             ProcessingJobName=job_name,
             RoleArn=role_arn,
@@ -45,7 +48,7 @@ def lambda_handler(event, context):
                 {
                     "InputName": "code",
                     "S3Input": {
-                        "S3Uri": "s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/",
+                        "S3Uri": script_s3_folder,
                         "LocalPath": "/opt/ml/processing/code",
                         "S3DataType": "S3Prefix",
                         "S3InputMode": "File"
