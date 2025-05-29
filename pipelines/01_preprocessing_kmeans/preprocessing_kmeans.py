@@ -45,7 +45,7 @@ def main():
             continue
 
         df = pd.read_csv(BytesIO(obj['Body'].read()), header=None)
-        df[0] = df[0].astype(float) * 200
+        df[0] = df[0].astype(float) * 2
 
         local_output_path = os.path.join(output_prefix, file)
         df.to_csv(local_output_path, index=False, header=False)

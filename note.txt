@@ -53,6 +53,12 @@ aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
   s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/preprocessing_kmeans.py
 
 
+# call API manually
+curl -X POST <API_ENDPOINT> \
+  -H "Content-Type: application/json" \
+  -d '{"pipeline": "preprocessing_kmeans", "params": {"input_files": ["input_test1.csv", "input_test2.csv"]}}'
+
+
 
 
 
