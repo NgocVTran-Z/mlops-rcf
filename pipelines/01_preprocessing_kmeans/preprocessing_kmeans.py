@@ -5,11 +5,11 @@ import boto3
 from io import BytesIO
 
 # Load config
-with open("config/global_config.json") as f:
-    global_config = json.load(f)
+# with open("config/global_config.json") as f:
+#     global_config = json.load(f)
 
-# with open("pipelines/01_preprocessing_kmeans/config.json") as f:
-#     local_config = json.load(f)
+with open("pipelines/01_preprocessing_kmeans/config.json") as f:
+    local_config = json.load(f)
 with open("/opt/ml/processing/config/global_config.json"):
     local_config = json.load(f)
 
