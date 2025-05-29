@@ -4,17 +4,26 @@ import pandas as pd
 import boto3
 from io import BytesIO
 
-# Load config
+# # Load config
 # with open("config/global_config.json") as f:
 #     global_config = json.load(f)
 
-with open("pipelines/01_preprocessing_kmeans/config.json") as f:
-    local_config = json.load(f)
-with open("/opt/ml/processing/config/global_config.json"):
-    local_config = json.load(f)
+# with open("pipelines/01_preprocessing_kmeans/config.json") as f:
+#     local_config = json.load(f)
 
+# config = {**global_config, **local_config}
+
+
+# load config
+with open("/opt/ml/processing/code/config/global_config.json") as f:
+    global_config = json.load(f)
+
+with open("/opt/ml/processing/code/pipelines/01_preprocessing_kmeans/config.json") as f:
+    local_config = json.load(f)
 
 config = {**global_config, **local_config}
+
+
 
 def main():
     s3 = boto3.client("s3")
