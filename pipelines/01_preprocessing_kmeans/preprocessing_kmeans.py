@@ -8,8 +8,11 @@ from io import BytesIO
 with open("config/global_config.json") as f:
     global_config = json.load(f)
 
-with open("pipelines/01_preprocessing_kmeans/config.json") as f:
+# with open("pipelines/01_preprocessing_kmeans/config.json") as f:
+#     local_config = json.load(f)
+with open("/opt/ml/processing/config/global_config.json"):
     local_config = json.load(f)
+
 
 config = {**global_config, **local_config}
 
