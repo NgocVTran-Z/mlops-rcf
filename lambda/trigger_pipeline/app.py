@@ -45,7 +45,7 @@ def lambda_handler(event, context):
                 {
                     "InputName": "code",
                     "S3Input": {
-                        "S3Uri": script_s3,
+                        "S3Uri": "s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/",
                         "LocalPath": "/opt/ml/processing/code",
                         "S3DataType": "S3Prefix",
                         "S3InputMode": "File"
