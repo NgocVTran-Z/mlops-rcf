@@ -39,6 +39,12 @@ def lambda_handler(event, context):
         # Extract script folder path from full S3 URI
         script_s3_folder = script_s3.rsplit("/", 1)[0] + "/"
 
+        print("✅ ENV TO PASS:", {
+            "INPUT_FILES": json.dumps(input_files),
+            "SPEED_TAGS": json.dumps(speed_tags)
+        })
+
+        
         sagemaker.create_processing_job(
             ProcessingJobName=job_name,
             RoleArn=role_arn,

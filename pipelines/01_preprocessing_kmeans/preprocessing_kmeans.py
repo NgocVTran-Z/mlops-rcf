@@ -19,6 +19,12 @@ def main():
     input_bucket = config["bucket_name"]
     input_prefix = config["incoming_prefix"]
 
+    import os
+    print("🧪 ENVIRONMENT VARIABLES DUMP:")
+    for key, value in os.environ.items():
+        print(f"🔹 {key} = {value}")
+
+
     input_folders = json.loads(os.environ.get("INPUT_FILES", "[]"))
     speed_tags = json.loads(os.environ.get("SPEED_TAGS", "[]"))
 
