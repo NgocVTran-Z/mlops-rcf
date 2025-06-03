@@ -41,6 +41,11 @@ aws cloudformation describe-stacks \
 aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
   s3://swo-ngoctran-public/jobs/preprocessing_kmeans.py
 
+
+aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
+  s3://s3-assetcare-bucket/mlops/jobs/01_preprocessing_kmeans/code/preprocessing_kmeans.py
+
+
 # upload .json
 aws s3 cp config/global_config.json \
   s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/config/global_config.json
@@ -76,5 +81,45 @@ git push origin main
   }
 }
 
+
+
+
+curl -X POST "https://bm9tnja9nj.execute-api.us-east-1.amazonaws.com/Prod/trigger" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pipeline": "preprocessing_kmeans",
+    "params": {
+      "input_files": ["input_test2.csv", "input_test3.csv"]
+    }
+  }'
+
+
+
+.
+├── config
+│   └── global_config.json
+├── pipelines
+│   ├── 01_preprocessing_kmeans
+│   │   ├── preprocessing_kmeans.py
+│   │   ├── input_files.json
+│   │   └── config.json
+│   ├── 02_train_kmeans
+│   ├── 03_preprocessing_rcf
+│   ├── 04_train_rcf
+│   ├── 05_inference_batch
+│   ├── 06_inference_realtime
+│   └── 07_deploy_endpoint
+├── lambda
+│   └── trigger_pipeline
+│       ├── app.py
+│       └── requirements.txt
+├── api_gateway
+├── scripts
+├── .github
+│   └── workflows
+│       ├── upload_preprocessing_kmeans.yaml
+│       └── push_preprocessing_kmeans.yaml
+├── template.yaml
+└── samconfig.toml
 
 

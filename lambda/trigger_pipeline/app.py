@@ -22,6 +22,7 @@ def lambda_handler(event, context):
 
         job_name = f"preprocess-kmeans-{uuid.uuid4().hex[:8]}"
         input_files = params.get("input_files", [])
+        speed_tags = params.get("speed_tag", [])
 
         # Read environment variables
         role_arn = os.environ["SAGEMAKER_ROLE_ARN"]
@@ -31,6 +32,7 @@ def lambda_handler(event, context):
 
         print("📦 Job Name:", job_name)
         print("📁 Input files:", input_files)
+        print("🚀 Speed Tags:", speed_tags)
         print("📜 Script S3:", script_s3)
         print("📤 Output S3:", output_s3)
 
@@ -78,7 +80,8 @@ def lambda_handler(event, context):
                 "MaxRuntimeInSeconds": 3600
             },
             Environment={
-                "INPUT_FILES": json.dumps(input_files)
+                "INPUT_FILES": json.dumps(input_files),
+                "SPEED_TAGS": json.dumps(speed_tags)
             }
         )
 
