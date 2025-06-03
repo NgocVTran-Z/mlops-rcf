@@ -12,20 +12,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Read input file list from JSON
+      - name: Read input params from JSON
         id: load_input
         run: |
           FILE_LIST=$(jq -c '.input_files' pipelines/01_preprocessing_kmeans/input_files.json)
+          SPEED_TAGS=$(jq -c '.speed_tag' pipelines/01_preprocessing_kmeans/input_files.json)
           echo "file_list=$FILE_LIST" >> $GITHUB_OUTPUT
+          echo "speed_tags=$SPEED_TAGS" >> $GITHUB_OUTPUT
 
-      - name: Debug - Show file list
-        run: echo "Input files = ${{ steps.load_input.outputs.file_list }}"
+      - name: Debug - Show inputs
+        run: |
+          echo "Input files = ${{ steps.load_input.outputs.file_list }}"
+          echo "Speed tags  = ${{ steps.load_input.outputs.speed_tags }}"
 
       - name: Trigger API Gateway (Lambda)
         run: |
           echo "Triggering Lambda via API Gateway..."
-          PAYLOAD=$(jq -nc --argjson files '${{ steps.load_input.outputs.file_list }}' \
-            '{pipeline: "preprocessing_kmeans", params: {input_files: $files}}')
+          PAYLOAD=$(jq -nc \
+            --argjson files '${{ steps.load_input.outputs.file_list }}' \
+            --argjson tags '${{ steps.load_input.outputs.speed_tags }}' \
+            '{pipeline: "preprocessing_kmeans", params: {input_files: $files, speed_tag: $tags}}')
           echo "Payload = $PAYLOAD"
           curl -X POST "${{ secrets.TRIGGER_API_ENDPOINT }}" \
             -H "Content-Type: application/json" \
