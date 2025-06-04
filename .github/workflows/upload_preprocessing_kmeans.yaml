@@ -1,10 +1,12 @@
-name: Upload All Updated Scripts to S3 + Build SAM
+name: Upload Preprocessing Script + Build SAM
 
 on:
   push:
     paths:
-      - '**.py'
-      - '**.json'
+      - 'pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py'
+      - 'shared/**'
+      - 'config/global_config.json'
+      - 'pipelines/01_preprocessing_kmeans/config.json'
       - 'template.yaml'
 
 jobs:
@@ -22,32 +24,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Upload updated scripts to S3
+      - name: Read S3 destination from config
+        id: config
         run: |
-          echo "📦 Detecting changed Python/JSON files..."
-          git fetch origin main
-          CHANGED_FILES=$(git diff --name-only origin/main HEAD | grep -E '\.py$|\.json$' || true)
-          
-          for FILE in $CHANGED_FILES; do
-            echo "🔄 Uploading $FILE ..."
-            
-            if [[ "$FILE" == pipelines/* ]]; then
-              # Read s3_script_path from corresponding config
-              CONFIG_FILE=$(dirname "$FILE")/config.json
-              if [[ -f "$CONFIG_FILE" ]]; then
-                DEST=$(jq -r '.s3_script_path' "$CONFIG_FILE")
-                aws s3 cp "$FILE" "$DEST"
-              else
-                echo "⚠️ No config.json for $FILE, skipping..."
-              fi
+          DEST=$(jq -r '.s3_script_path' pipelines/01_preprocessing_kmeans/config.json)
+          echo "s3_uri=$DEST" >> $GITHUB_OUTPUT
 
-            elif [[ "$FILE" == shared/* ]]; then
-              # Upload shared module into shared/ in the script S3 path
-              DEST=$(jq -r '.s3_script_path' pipelines/01_preprocessing_kmeans/config.json)
-              SHARED_URI=$(dirname "$DEST")/shared/
-              aws s3 cp "$FILE" "$SHARED_URI${FILE#shared/}"
-            fi
-          done
+      - name: Upload preprocessing script and shared code to S3
+        run: |
+          SCRIPT_URI="${{ steps.config.outputs.s3_uri }}"
+          SHARED_URI=$(dirname "$SCRIPT_URI")/shared/
+          
+          echo "Uploading preprocessing_kmeans.py to $SCRIPT_URI"
+          aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py "$SCRIPT_URI"
+          
+          echo "Uploading shared/ to $SHARED_URI"
+          aws s3 cp shared/ "$SHARED_URI" --recursive
 
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
