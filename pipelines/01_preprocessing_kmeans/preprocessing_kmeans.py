@@ -22,6 +22,8 @@ def main():
     speed_tags = json.loads(os.environ.get("SPEED_TAGS", "[]"))
 
     print("📌 Speed Tags received:", speed_tags)
+    for tag in speed_tags:
+        print("Tag", tag)
 
     df = load_parquet_files_from_folders(
         bucket=config["bucket_name"],
