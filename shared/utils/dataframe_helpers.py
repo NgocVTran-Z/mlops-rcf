@@ -1,4 +1,4 @@
-def print_df_shape(df, label=""):
+def print_dataframe_shape(df, label=""):
     if df.empty:
         print(f"⚠️ {label} - DataFrame is empty.")
     else:
