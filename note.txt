@@ -57,6 +57,13 @@ aws s3 cp pipelines/01_preprocessing_kmeans/config.json \
 aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py \
   s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/preprocessing_kmeans.py
 
+# upload file libs
+aws s3 cp shared/ \
+  s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/shared/ \
+  --recursive
+
+
+
 
 # call API manually
 curl -X POST <API_ENDPOINT> \
