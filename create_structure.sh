@@ -32,6 +32,17 @@ touch .github/workflows/push_preprocessing_kmeans.yaml
 
 
 
+# Tạo folder và file mới
+mkdir -p shared/io
+mkdir -p shared/utils
+
+touch shared/io/s3_parquet_loader.py
+touch shared/utils/dataframe_helpers.py
+touch shared/__init__.py
+touch shared/io/__init__.py
+touch shared/utils/__init__.py
+
+
 
 
 
