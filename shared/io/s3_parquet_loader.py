@@ -37,5 +37,5 @@ def load_parquet_files_from_folders(bucket: str, prefix: str, folders: list) -> 
 
     combined_df = pd.concat(df_list, ignore_index=True)
     print(f"✅ Combined shape: {combined_df.shape}")
-    print(f"Columns: {combined_df.columns}")
+    print(f"Columnssss: {combined_df.columns}")
     return combined_df
