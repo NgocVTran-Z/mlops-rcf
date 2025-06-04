@@ -62,6 +62,11 @@ aws s3 cp shared/ \
   s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/shared/ \
   --recursive
 
+aws s3 cp shared/io/s3_parquet_loader.py \
+  s3://swo-ngoctran-public/jobs/01_preprocessing_kmeans/code/shared/io/s3_parquet_loader.py
+
+
+
 
 
 
