@@ -28,20 +28,34 @@ jobs:
           BASE_PATH=$(jq -r '.s3_script_path' pipelines/01_preprocessing_kmeans/config.json)
           echo "s3_base=$BASE_PATH" >> $GITHUB_OUTPUT
 
-      - name: Upload changed .py files to matching S3 folder
+      - name: Detect changed Python files
+        id: changed
+        run: |
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main | grep '\.py$' || true)
+          echo "$CHANGED_FILES" > changed_files.txt
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Debug - Show changed Python files
+        run: |
+          echo "Changed Python files:"
+          cat changed_files.txt
+
+      - name: Upload changed .py files to matching S3 folders
         run: |
           BASE_S3=${{ steps.config.outputs.s3_base }}
 
-          echo "Uploading changed Python files to S3..."
+          while read -r file; do
+            if [ -n "$file" ]; then
+              CLEANED_FILE=$(echo "$file" | sed 's|^\./||')
+              S3_TARGET="$BASE_S3/$CLEANED_FILE"
 
-          git fetch origin main
-          CHANGED_FILES=$(git diff --name-only origin/main | grep '\.py$' || true)
-
-          for file in $CHANGED_FILES; do
-            S3_PATH="$BASE_S3/$(dirname "$file")/"
-            echo "Uploading $file → $S3_PATH"
-            aws s3 cp "$file" "$S3_PATH"
-          done
+              echo "Uploading $CLEANED_FILE → $S3_TARGET"
+              aws s3 cp "$CLEANED_FILE" "$S3_TARGET"
+            fi
+          done < changed_files.txt
 
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
