@@ -31,4 +31,5 @@ def load_parquet_from_s3(bucket: str, prefix: str) -> pd.DataFrame:
 
     combined_df = pd.concat(df_list, ignore_index=True)
     print(f"✅ Combined shape: {combined_df.shape}")
+    print(f"Columns: {combined_df.columns}")
     return combined_df
