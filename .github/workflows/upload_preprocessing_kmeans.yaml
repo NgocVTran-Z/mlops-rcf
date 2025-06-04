@@ -1,12 +1,10 @@
-name: Upload Preprocessing Script + Build SAM
+name: Upload All Python Files + Build SAM
 
 on:
   push:
     paths:
-      - 'pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py'
-      - 'shared/**'
+      - '**/*.py'
       - 'config/global_config.json'
-      - 'pipelines/01_preprocessing_kmeans/config.json'
       - 'template.yaml'
 
 jobs:
@@ -24,22 +22,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Read S3 destination from config
+      - name: Read S3 base path from config
         id: config
         run: |
-          DEST=$(jq -r '.s3_script_path' pipelines/01_preprocessing_kmeans/config.json)
-          echo "s3_uri=$DEST" >> $GITHUB_OUTPUT
+          BASE_PATH=$(jq -r '.s3_script_path' pipelines/01_preprocessing_kmeans/config.json)
+          echo "s3_base=$BASE_PATH" >> $GITHUB_OUTPUT
 
-      - name: Upload preprocessing script and shared code to S3
+      - name: Upload changed .py files to matching S3 folder
         run: |
-          SCRIPT_URI="${{ steps.config.outputs.s3_uri }}"
-          SHARED_URI=$(dirname "$SCRIPT_URI")/shared/
-          
-          echo "Uploading preprocessing_kmeans.py to $SCRIPT_URI"
-          aws s3 cp pipelines/01_preprocessing_kmeans/preprocessing_kmeans.py "$SCRIPT_URI"
-          
-          echo "Uploading shared/ to $SHARED_URI"
-          aws s3 cp shared/ "$SHARED_URI" --recursive
+          BASE_S3=${{ steps.config.outputs.s3_base }}
+
+          echo "Uploading changed Python files to S3..."
+
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main | grep '\.py$' || true)
+
+          for file in $CHANGED_FILES; do
+            S3_PATH="$BASE_S3/$(dirname "$file")/"
+            echo "Uploading $file → $S3_PATH"
+            aws s3 cp "$file" "$S3_PATH"
+          done
 
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
